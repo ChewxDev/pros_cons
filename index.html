@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pros vs. Cons — Data Snapshot</title>
+  <style>
+    :root {
+      --bg: #0b1021;
+      --panel: #121a32;
+      --accent: #5fe0c1;
+      --accent-2: #8fb0ff;
+      --text: #e8ecf5;
+      --muted: #9fb0c9;
+      --danger: #ff7b8a;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+      --radius: 16px;
+      --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, Menlo, monospace;
+      --sans: "Inter var", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--sans);
+      background: radial-gradient(circle at 20% 20%, rgba(95, 224, 193, 0.08), transparent 30%),
+                  radial-gradient(circle at 80% 0%, rgba(143, 176, 255, 0.12), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .page {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.5;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+    .pill {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(95, 224, 193, 0.14);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .cards {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .metric {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .metric span { font-size: 16px; color: var(--muted); }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    .pill-soft {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+    }
+    .pill-soft strong { color: var(--text); }
+    .list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .item {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .item.pro { border-color: rgba(95, 224, 193, 0.25); }
+    .item.con { border-color: rgba(255, 123, 138, 0.25); }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .item-title {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .item-meta {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .bar {
+      margin-top: 8px;
+      height: 9px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+    .bar span.con {
+      background: linear-gradient(90deg, rgba(255, 123, 138, 0.9), rgba(255, 174, 146, 0.9));
+    }
+    .textarea {
+      width: 100%;
+      min-height: 220px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius);
+      padding: 14px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    button {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      border: none;
+      color: #0b1021;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+    button:active { transform: translateY(1px); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25); }
+    button.secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      box-shadow: none;
+    }
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .chart {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .chart-row {
+      display: grid;
+      grid-template-columns: 120px 1fr 80px;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .chart-bar {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 999px;
+      overflow: hidden;
+      height: 10px;
+    }
+    .chart-bar span {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 999px;
+    }
+    .chart-bar .pro { background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    .chart-bar .con { background: linear-gradient(90deg, rgba(255, 123, 138, 0.9), rgba(255, 174, 146, 0.9)); }
+    .error {
+      color: var(--danger);
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    @media (max-width: 640px) {
+      .chart-row { grid-template-columns: 100px 1fr 60px; }
+      .title { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <div class="title">Pros vs. Cons — Data Snapshot</div>
+        <div class="subtitle">
+          A transparent, data-style view of the decision. All inputs are editable — treat this as a neutral,
+          structured conversation starter, not a verdict. Respect her autonomy and keep the tone constructive.
+        </div>
+      </div>
+      <div class="pill">Evidence-weighted, human-first</div>
+    </header>
+
+    <section class="grid cards" style="margin-top: 20px;">
+      <div class="card">
+        <h3>Pros (weighted)</h3>
+        <div class="metric" id="pros-score">0</div>
+        <div class="small" id="pros-meta"></div>
+      </div>
+      <div class="card">
+        <h3>Cons (weighted)</h3>
+        <div class="metric" id="cons-score">0</div>
+        <div class="small" id="cons-meta"></div>
+      </div>
+      <div class="card">
+        <h3>Net tilt</h3>
+        <div class="metric" id="net-tilt">0</div>
+        <div class="small" id="net-meta"></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top: 16px;">
+      <div class="item-header" style="margin-bottom: 6px;">
+        <div class="item-title">Distribution</div>
+        <div class="pill-soft"><strong>Method:</strong> importance × evidence strength</div>
+      </div>
+      <div class="chart" id="chart"></div>
+    </section>
+
+    <section class="row" style="margin-top: 16px;">
+      <div class="card">
+        <div class="item-header">
+          <div class="item-title">Pros</div>
+          <div class="pill-soft"><strong>Goal:</strong> What favors reconnecting</div>
+        </div>
+        <div class="list" id="pros-list"></div>
+      </div>
+      <div class="card">
+        <div class="item-header">
+          <div class="item-title">Cons</div>
+          <div class="pill-soft"><strong>Risk:</strong> What argues against reconnecting</div>
+        </div>
+        <div class="list" id="cons-list"></div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top: 16px;">
+      <div class="item-header">
+        <div class="item-title">Update the data</div>
+        <div class="pill-soft"><strong>Tip:</strong> Keep each entry specific and evidence-linked.</div>
+      </div>
+      <p class="small">
+        Fields: <code>type</code> ("pro" | "con"), <code>factor</code> (short statement),
+        <code>importance</code> (1–5), <code>evidence_strength</code> (0–1, how solid the data feels),
+        and an optional <code>note</code> with the source (e.g., journal counts, therapist notes, text review).
+        Scoring = importance × evidence_strength. Edit the JSON, then recalc.
+      </p>
+      <textarea id="data-input" class="textarea"></textarea>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="recalc">Recalculate</button>
+        <button id="reset" class="secondary">Reset to example</button>
+      </div>
+      <div id="error" class="error" aria-live="polite"></div>
+    </section>
+
+    <section class="card" style="margin-top: 16px;">
+      <div class="item-header">
+        <div class="item-title">Method notes</div>
+        <div class="pill-soft"><strong>Audience:</strong> Data-minded reader</div>
+      </div>
+      <ul class="small">
+        <li>Weighted scoring = importance (impact on wellbeing/future) × evidence_strength (how solid the observation is).</li>
+        <li>Totals show current tilt; this is not predictive — it surfaces where the evidence sits today.</li>
+        <li>Improving confidence: add specific examples, frequencies, time spans, and whether both of you agree on them.</li>
+        <li>Fairness check: look for asymmetry (e.g., lots of vague pros vs. concrete cons). That signals where to gather better evidence.</li>
+        <li>Next step could be a joint review: invite her to adjust weights/evidence so the view reflects both perspectives.</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    const dataInput = document.getElementById('data-input');
+    const prosList = document.getElementById('pros-list');
+    const consList = document.getElementById('cons-list');
+    const prosScore = document.getElementById('pros-score');
+    const consScore = document.getElementById('cons-score');
+    const netTilt = document.getElementById('net-tilt');
+    const prosMeta = document.getElementById('pros-meta');
+    const consMeta = document.getElementById('cons-meta');
+    const netMeta = document.getElementById('net-meta');
+    const chart = document.getElementById('chart');
+    const errorBox = document.getElementById('error');
+
+    const exampleData = [
+      {
+        type: "pro",
+        factor: "Owning that actions impacted you and your support system (friends are aware)",
+        importance: 4.3,
+        evidence_strength: 0.56,
+        note: "Acknowledged explicitly; discussed with you and aware of friends' perspective."
+      },
+      {
+        type: "pro",
+        factor: "Recognizing listening to the wrong people was a choice with personal consequences",
+        importance: 4.1,
+        evidence_strength: 0.58,
+        note: "Captured in journal/therapy notes; framing responsibility as mine."
+      },
+      {
+        type: "pro",
+        factor: "Stopping outsourcing of thinking/values by cutting off weakening influences",
+        importance: 4.4,
+        evidence_strength: 0.6,
+        note: "Documented boundary changes (unfollows, reduced contact, new habits)."
+      },
+      {
+        type: "pro",
+        factor: "Shifting from external approval to values I can stand on when unobserved",
+        importance: 4.2,
+        evidence_strength: 0.55,
+        note: "Values written; accountability plan to self-check without audience."
+      },
+      {
+        type: "pro",
+        factor: "Prepared to earn respect slowly through consistency, not explanations",
+        importance: 4.0,
+        evidence_strength: 0.52,
+        note: "Expectation set: no instant belief; focus on repeated behaviors."
+      },
+      {
+        type: "pro",
+        factor: "Commitment to honest communication over silence or outsider involvement",
+        importance: 4.6,
+        evidence_strength: 0.62,
+        note: "Agreed to raise issues early, even if vulnerable."
+      },
+      {
+        type: "pro",
+        factor: "Willing to live transparently and be accountable long-term with others aware",
+        importance: 4.5,
+        evidence_strength: 0.6,
+        note: "Transparency plan (check-ins, observable behaviors) acknowledged."
+      },
+      {
+        type: "con",
+        factor: "Friends' awareness deepens the breach and repair difficulty",
+        importance: 4.7,
+        evidence_strength: 0.7,
+        note: "Multiple third parties know; trust recovery is harder."
+      },
+      {
+        type: "con",
+        factor: "Pressure/concern from her circle could make reconciliation emotionally heavy",
+        importance: 4.4,
+        evidence_strength: 0.66,
+        note: "External opinions may influence feelings and stress."
+      },
+      {
+        type: "con",
+        factor: "Change might still not be welcomed back; outcome must be accepted without resentment",
+        importance: 4.2,
+        evidence_strength: 0.58,
+        note: "Risk acknowledged; acceptance required regardless of result."
+      },
+      {
+        type: "con",
+        factor: "Words can work against me; behavior must lead and may take time to register",
+        importance: 4.1,
+        evidence_strength: 0.64,
+        note: "Initial messaging may be discounted; actions need to accumulate."
+      },
+      {
+        type: "con",
+        factor: "Returning could expose her to judgment or 'I told you so' reactions",
+        importance: 4.3,
+        evidence_strength: 0.68,
+        note: "Social cost borne by her; unfair burden noted."
+      },
+      {
+        type: "con",
+        factor: "People may continue to judge based on past actions, not intentions",
+        importance: 4.0,
+        evidence_strength: 0.62,
+        note: "Reputation drag lingers; requires sustained positive signal."
+      }
+    ];
+
+    function renderList(target, entries, kind) {
+      target.innerHTML = "";
+      if (!entries.length) {
+        target.innerHTML = '<div class="small">No data yet.</div>';
+        return;
+      }
+      entries.forEach(item => {
+        const score = item.importance * item.evidence_strength;
+        const div = document.createElement('div');
+        div.className = `item ${kind}`;
+        div.innerHTML = `
+          <div class="item-header">
+            <div class="item-title">${item.factor}</div>
+            <div class="item-meta">
+              <span>Importance: ${item.importance.toFixed(2)}</span>
+              <span>Evidence: ${item.evidence_strength.toFixed(2)}</span>
+              <span>Score: ${score.toFixed(2)}</span>
+            </div>
+          </div>
+          <div class="bar"><span class="${kind}" style="width:${Math.min(score * 12, 100)}%"></span></div>
+          ${item.note ? `<div class="small" style="margin-top:8px;">${item.note}</div>` : ""}
+        `;
+        target.appendChild(div);
+      });
+    }
+
+    function renderSummary(data) {
+      const pros = data.filter(d => d.type === 'pro');
+      const cons = data.filter(d => d.type === 'con');
+      const proScore = pros.reduce((acc, item) => acc + item.importance * item.evidence_strength, 0);
+      const conScore = cons.reduce((acc, item) => acc + item.importance * item.evidence_strength, 0);
+      const net = proScore - conScore;
+
+      const proAvgConf = pros.length ? pros.reduce((acc, i) => acc + i.evidence_strength, 0) / pros.length : 0;
+      const conAvgConf = cons.length ? cons.reduce((acc, i) => acc + i.evidence_strength, 0) / cons.length : 0;
+
+      prosScore.textContent = proScore.toFixed(2);
+      consScore.textContent = conScore.toFixed(2);
+      netTilt.textContent = net.toFixed(2);
+
+      prosMeta.textContent = pros.length
+        ? `Avg evidence strength: ${proAvgConf.toFixed(2)} across ${pros.length} entries`
+        : "No pros added yet.";
+      consMeta.textContent = cons.length
+        ? `Avg evidence strength: ${conAvgConf.toFixed(2)} across ${cons.length} entries`
+        : "No cons added yet.";
+      netMeta.textContent = `Positive favors reconnecting; negative favors stepping back. Neutral suggests more data.`;
+    }
+
+    function renderChart(data) {
+      chart.innerHTML = "";
+      if (!data.length) {
+        chart.innerHTML = '<div class="small">Add pros/cons to see the distribution.</div>';
+        return;
+      }
+      const maxScore = Math.max(...data.map(d => d.importance * d.evidence_strength));
+      data
+        .slice()
+        .sort((a, b) => (b.importance * b.evidence_strength) - (a.importance * a.evidence_strength))
+        .forEach(item => {
+          const score = item.importance * item.evidence_strength;
+          const width = maxScore ? (score / maxScore) * 100 : 0;
+          const row = document.createElement('div');
+          row.className = 'chart-row';
+          row.innerHTML = `
+            <div>${item.type === 'pro' ? 'Pro' : 'Con'}</div>
+            <div class="chart-bar"><span class="${item.type}" style="width:${width}%"></span></div>
+            <div style="text-align:right; color:${item.type === 'pro' ? 'var(--accent)' : 'var(--danger)'}">${score.toFixed(2)}</div>
+          `;
+          chart.appendChild(row);
+        });
+    }
+
+    function renderAll(data) {
+      renderList(prosList, data.filter(d => d.type === 'pro'), 'pro');
+      renderList(consList, data.filter(d => d.type === 'con'), 'con');
+      renderSummary(data);
+      renderChart(data);
+    }
+
+    function loadData(json) {
+      let parsed;
+      try {
+        parsed = JSON.parse(json);
+        if (!Array.isArray(parsed)) throw new Error("Data must be an array.");
+      } catch (err) {
+        errorBox.textContent = `Parse error: ${err.message}`;
+        return;
+      }
+      errorBox.textContent = "";
+      renderAll(parsed);
+    }
+
+    document.getElementById('recalc').addEventListener('click', () => loadData(dataInput.value));
+    document.getElementById('reset').addEventListener('click', () => {
+      dataInput.value = JSON.stringify(exampleData, null, 2);
+      loadData(dataInput.value);
+    });
+
+    // Initialize with example data.
+    dataInput.value = JSON.stringify(exampleData, null, 2);
+    loadData(dataInput.value);
+  </script>
+</body>
+</html>
